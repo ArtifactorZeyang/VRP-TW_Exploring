@@ -69,7 +69,7 @@ coordinate_array = np.array(coordinate_list).reshape(int(len(coordinate_list)/3)
 # API Baidu Maps
 # Generate Est. Time & Distance between two points
 
-# def MatrixGenerator(coordinate_array):
+def MatrixGenerator(coordinate_array):
 
     distance_list= []
     time_list = []
@@ -111,13 +111,10 @@ coordinate_array = np.array(coordinate_list).reshape(int(len(coordinate_list)/3)
     distance_matrix = np.array(distance_list).reshape(len(coordinate_array),len(coordinate_array))
     time_matrix = np.array(time_list).reshape(len(coordinate_array),len(coordinate_array))
 
-    print(distance_matrix)
-    print(time_matrix)
-
-    # return distance_matrix, time_matrix
+    return distance_matrix, time_matrix
 
 
-# MatrixGenerator(coordinate_array)
+MatrixGenerator(coordinate_array)
 
 
 end_time = datetime.datetime.now()
