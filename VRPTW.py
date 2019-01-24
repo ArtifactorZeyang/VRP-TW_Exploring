@@ -72,8 +72,18 @@ Time_Matrix = pd.read_csv("Time.csv", header = None)
 
 # End of Global Data
 
+# Input Data For Each Time of Use
+# test data: depot + duplicate depot + 8 random locations
+Locations = [0, 0, 10, 11, 14, 29, 32, 37, 43, 46]
+Demands = [0, 0, 2, 5, 10, 3, 5, 7, 5, 4]
+Time_Windows = [(0, 0), (10800, 18000),
+                (0, 32400), (0, 32400),
+                (0, 32400), (0, 32400),
+                (0, 32400), (0, 32400),
+                (0, 32400), (0, 32400)]
 
-def create_data_model(Locations, Demands):
+
+def create_data_model(Locations, Demands, TimeWindows):
 
     data = {}
     data["locations"] = Locations
@@ -86,22 +96,14 @@ def create_data_model(Locations, Demands):
     data["demands"] = Demands
     data["vehicle_capacities"] = [100] # >> sum of test data (unlimited for testing)
     data["time_per_demand_unit"] = 200 # approximate / guessed value, just for testing
-
-    TimeWindows = [(0, 0), (10800, 18000)]
-    while len(TimeWindows) < len(data['coordinates']):
-        TimeWindows.append((0, 32400))
+    #
+    # TimeWindows = [(0, 0), (10800, 18000)]
+    # while len(TimeWindows) < len(data['coordinates']):
+    #     TimeWindows.append((0, 32400))
 
     data["time_windows"] = TimeWindows
 
     return data
-
-
-# Input Data For Each Time of Use
-# test data: depot + duplicate depot + 8 random locations
-Locations = [0, 0, 10, 11, 14, 29, 32, 37, 43, 46]
-Demands = [0, 0, 2, 5, 10, 3, 5, 7, 5, 4]
-
-data = create_data_model(Locations, Demands)
 
 
 # # Visualisation
@@ -233,7 +235,7 @@ def print_solution(data, routing, assignment):
 
 def Main():
 
-    data = create_data_model(Locations, Demands)
+    data = create_data_model(Locations, Demands, Time_Windows)
 
     # Create Routing Model
     routing = pywrapcp.RoutingModel(data["num_locations"], data["num_vehicles"], data["depot"])
