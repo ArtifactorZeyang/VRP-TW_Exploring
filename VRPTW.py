@@ -7,7 +7,9 @@ from ortools.constraint_solver import routing_enums_pb2
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+
+import datetime
 
 
 global coordinate_array, Distance_Matrix, Time_Matrix
@@ -136,6 +138,8 @@ def create_data_model(Locations, Demands, TimeWindows):
 # exp_data_plot(Locations, Demands)
 
 
+StartTime = datetime.datetime.now()
+
 # Constraints
 
 def create_distance_callback(data):
@@ -191,7 +195,7 @@ def print_solution(data, routing, assignment):
     for vehicle_id in range(data["num_vehicles"]):
 
         index = routing.Start(vehicle_id)
-        plan_output = '路径规划： {0}号车:\n'.format(vehicle_id+1)
+        plan_output = '\n路径规划： {0}号车:\n'.format(vehicle_id+1)
         route_dist = 0
 
         while not routing.IsEnd(index):
@@ -203,7 +207,11 @@ def print_solution(data, routing, assignment):
             time_var = time_dimension.CumulVar(index)
             time_min = assignment.Min(time_var)
             time_max = assignment.Max(time_var)
-            plan_output += ' {0}    距离:{1:.2f}千米, 驾车时长:{2:.0f}分钟， 时间(+{3:.0f}分钟,+{4:.0f}分钟) ->\n'.format(
+            plan_output += ' {0}    ' \
+                           '距离：{1:.2f}千米, ' \
+                           '驾车时长：{2:.0f}分钟， ' \
+                           '最早到达时间：+{3:.0f}分钟， ' \
+                           '最晚离开时间：+{4:.0f}分钟 ->\n'.format(
                 coordinate_array[data["locations"][node_index]][0],
                 Distance_Matrix.iloc[node_index][next_node_index]/1000,
                 Time_Matrix.iloc[node_index][next_node_index]/60,
@@ -218,7 +226,9 @@ def print_solution(data, routing, assignment):
         time_max = assignment.Max(time_var)
         total_dist += route_dist
         time_matrix += route_time
-        plan_output += ' {0}    时间(+{1:.0f}分钟,+{2:.0f}分钟)\n'.format(
+        plan_output += ' {0}    ' \
+                       '最早到达时间：+{1:.0f}分钟， ' \
+                       '最晚离开时间：+{2:.0f}分钟\n'.format(
             coordinate_array[data["locations"][node_index]][0],
             time_min/60,
             time_max/60)
@@ -226,9 +236,10 @@ def print_solution(data, routing, assignment):
         plan_output += '\n总路程: {0} 千米\n'.format(route_dist/1000)
         plan_output += '总时长 {:.2f} 小时\n'.format(route_time/3600)
         print(plan_output)
+        print("-"*100)
 
-    print('所有车辆总路程: {0} 千米'.format(total_dist/1000))
-    print('所有车辆总时间 {:.2f} 小时'.format(time_matrix/3600))
+    print('\n所有车辆总路程: {0} 千米'.format(total_dist/1000))
+    print('所有车辆总时间 {:.2f} 小时\n'.format(time_matrix/3600))
 
 
 # Main Functions
@@ -261,3 +272,11 @@ def Main():
 
 
 Main()
+
+
+
+EndTime = datetime.datetime.now()
+processing_time = (EndTime - StartTime).seconds
+
+print("="*100)
+print("\n程序运行时间： %d 秒\n" % processing_time)
